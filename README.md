@@ -197,6 +197,40 @@ Useful options:
 
 By default this treats any active timed calendar event as a meeting. That is more reliable than Teams-link detection because some synced Exchange calendars hide the meeting body from macOS Calendar.
 
+To run the macOS bridge at login and keep it in the background, install it as a per-user LaunchAgent:
+
+```bash
+python3 tools/macos_calendar_bridge.py --once --hide-subject
+sh tools/install_macos_launch_agent.sh --device "http://onair.local"
+```
+
+The installer hides the real meeting subject by default so the background logs and dashboard show `Meeting`. To send the real subject, add `--show-subject`.
+
+Example with one calendar and Teams-looking events only:
+
+```bash
+sh tools/install_macos_launch_agent.sh \
+  --device "http://onair.local" \
+  --calendar "Calendar" \
+  --require-teams-link
+```
+
+Check status and logs:
+
+```bash
+sh tools/install_macos_launch_agent.sh --status
+tail -f ~/Library/Logs/on_air_sign/macos_calendar_bridge.out.log
+tail -f ~/Library/Logs/on_air_sign/macos_calendar_bridge.err.log
+```
+
+Stop and remove the background service:
+
+```bash
+sh tools/install_macos_launch_agent.sh --uninstall
+```
+
+If the background service logs a macOS privacy error, run the `--once` command from Terminal again and confirm Calendar and Local Network permissions in System Settings > Privacy & Security.
+
 ### Microsoft Graph Bridge
 
 The Graph bridge is a cleaner API-based option when your Microsoft tenant allows app registrations.
