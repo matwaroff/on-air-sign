@@ -111,6 +111,15 @@ if [ "$(uname -s)" != "Darwin" ]; then
     exit 2
 fi
 
+if [ "$(id -u)" -eq 0 ]; then
+    echo "Do not run this installer with sudo." >&2
+    echo "macOS LaunchAgents must be installed from your logged-in user session." >&2
+    if [ "${SUDO_USER:-}" != "" ]; then
+        echo "Run it again without sudo as $SUDO_USER." >&2
+    fi
+    exit 2
+fi
+
 SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" && pwd -P)
 REPO_DIR=$(CDPATH= cd "$SCRIPT_DIR/.." && pwd -P)
 BRIDGE_SCRIPT="$REPO_DIR/tools/macos_calendar_bridge.py"

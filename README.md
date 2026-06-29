@@ -204,6 +204,8 @@ python3 tools/macos_calendar_bridge.py --once --hide-subject
 sh tools/install_macos_launch_agent.sh --device "http://onair.local"
 ```
 
+Run the installer with `sh`, not `sudo`. If you get `permission denied` from `./tools/install_macos_launch_agent.sh`, that only means the script file is not executable; use the `sh tools/install_macos_launch_agent.sh ...` form above.
+
 The installer hides the real meeting subject by default so the background logs and dashboard show `Meeting`. To send the real subject, add `--show-subject`.
 
 Example with one calendar and Teams-looking events only:
@@ -230,6 +232,15 @@ sh tools/install_macos_launch_agent.sh --uninstall
 ```
 
 If the background service logs a macOS privacy error, run the `--once` command from Terminal again and confirm Calendar and Local Network permissions in System Settings > Privacy & Security.
+
+If you accidentally ran the installer with `sudo`, clean up any root-owned files and reinstall as your normal user:
+
+```bash
+sudo rm -f "$HOME/Library/LaunchAgents/com.onair.sign.calendar-bridge.plist"
+sudo chown "$USER":staff "$HOME/Library/LaunchAgents"
+sudo chown -R "$USER":staff "$HOME/Library/Logs/on_air_sign" 2>/dev/null || true
+sh tools/install_macos_launch_agent.sh --device "http://onair.local"
+```
 
 ### Microsoft Graph Bridge
 
