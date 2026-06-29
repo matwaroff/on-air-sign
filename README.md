@@ -157,6 +157,46 @@ Useful options:
 
 Keep the PowerShell window open while you want calendar sync running.
 
+### Local macOS Calendar Bridge, No App Registration
+
+On macOS, use the local Calendar bridge. It reads events from the built-in Calendar app, so your Exchange or Microsoft 365 calendar must already be synced into macOS Calendar. This does not use Microsoft Graph, does not need an app registration, and does not store your Exchange password.
+
+First confirm your work calendar appears in the Calendar app. Then run:
+
+```bash
+cd /path/to/on_air_sign
+export ON_AIR_SIGN_URL="http://onair.local"
+python3 tools/macos_calendar_bridge.py
+```
+
+The first run may trigger a macOS privacy prompt for Terminal or Python to access Calendar. Allow it. If you need to fix permissions later, check System Settings > Privacy & Security > Calendars and Automation.
+
+List available macOS calendar names:
+
+```bash
+python3 tools/macos_calendar_bridge.py --list-calendars
+```
+
+Restrict the bridge to one calendar and only trigger for events that look like Teams meetings:
+
+```bash
+python3 tools/macos_calendar_bridge.py --calendar "Calendar" --require-teams-link --hide-subject
+```
+
+Useful options:
+
+```text
+--device http://onair.local    ESP32 dashboard/API base URL
+--interval 30                  Poll interval in seconds
+--calendar "Calendar"          Calendar name to include; repeat for multiple calendars
+--require-teams-link           Only trigger when the event has a Teams/online-meeting marker
+--hide-subject                 Send "Meeting" instead of the real calendar subject
+--include-all-day              Allow all-day events to turn the sign on
+--once                         Send one update and exit
+```
+
+By default this treats any active timed calendar event as a meeting. That is more reliable than Teams-link detection because some synced Exchange calendars hide the meeting body from macOS Calendar.
+
 ### Microsoft Graph Bridge
 
 The Graph bridge is a cleaner API-based option when your Microsoft tenant allows app registrations.
